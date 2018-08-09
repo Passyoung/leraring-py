@@ -5,6 +5,7 @@ from ship import Ship
 from alien import Alien
 import game_functions as gf
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 
 
@@ -21,18 +22,19 @@ def run_game():
     # 创建一个外星人
     aliens = Group()
     stats = GameStats(ai_settings)
+    sb = Scoreboard(ai_settings,screen,stats)
     gf.create_fleet(ai_settings, screen, ship, aliens)
     # 开始游戏主循环
     while True:
         # 监测键盘和鼠标事件
-        gf.check_events(ai_settings, screen,stats, play_button, ship, bullets)
+        gf.check_events(ai_settings,screen,stats,play_button,ship,aliens,bullets)
 
         if stats.game_active:
             ship.updade()
             gf.update_bullets(ai_settings, screen, ship, aliens, bullets)
             gf.update_aliens(ai_settings, stats, screen, ship, aliens, bullets)
 
-        gf.update_screen(ai_settings, screen,stats, ship, aliens, bullets,play_button)
+        gf.update_screen(ai_settings, screen,stats, sb, ship, aliens, bullets,play_button)
 
 
 run_game()
