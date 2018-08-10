@@ -71,16 +71,21 @@ def update_screen(ai_settings, screen,stats, sb, ship, aliens, bullets,play_butt
     pygame.display.flip()
 
 
-def update_bullets(ai_settings,screen,ship,aliens,bullets):
+def update_bullets(ai_settings,screen,stats,sb,ship,aliens,bullets):
     # 更新子弹位置
     bullets.update()
     for bullet in bullets.copy():
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
-    check_bullet_aliens_collisions(ai_settings,screen,ship,aliens,bullets)
+    check_bullet_aliens_collisions(ai_settings,screen,stats,sb,ship,aliens,bullets)
 
-def check_bullet_aliens_collisions(ai_settings,screen,ship,aliens,bullets):
+def check_bullet_aliens_collisions(ai_settings,screen,stats,sb,ship,aliens,bullets):
     collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
+    if collisions:
+        for aliens in collisions.values():
+            stats.score += ai_settings.alien_points*len(aliens)
+            sb.prep_score()
+        check_high_score(stats,sb)
     if len(aliens) == 0:
         bullets.empty()
         ai_settings.increase_speed()
@@ -159,3 +164,8 @@ def check_aliens_bottom(ai_settings,stats,screen,ship,aliens,bullets):
         if alien.rect.bottom >= screen_rect.bottom:
             ship_hit(ai_settings,stats,screen,ship,aliens,bullets)
             break
+
+def check_high_score(stats,sb):
+    if stats.score > stats.high_score:
+        stats.high_score = stats.score
+        sb.prep_high_score()
